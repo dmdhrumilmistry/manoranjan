@@ -2,9 +2,10 @@ import { getJSON } from '../lib/http'
 import { settings } from '../state/settings'
 import type { Episode, MediaItem, StreamSource, VideoProvider } from './types'
 import { asArray, plainText, popularityFrom, yearOf } from './util'
+import { guessLang, isSubtitleFile } from '../lib/subtitles'
 
 /**
- * Internet Archive — public-domain & openly licensed films and classic TV.
+ * Internet Archive - public-domain & openly licensed films and classic TV.
  * Public, CORS-enabled APIs, no key required.
  */
 const BASE = 'https://archive.org'
@@ -68,21 +69,54 @@ async function query(q: string, rows = 40, sort = 'downloads desc'): Promise<Sea
   return r.response.docs
 }
 
-/** Rank playable files: prefer h.264 originals, then larger derivatives. */
-function rankFiles(files: MetaFile[]): MetaFile[] {
-  const score = (f: MetaFile) =>
-    (/h\.264/i.test(f.format ?? '') ? 4 : 0) + (f.source === 'original' ? 2 : 0) + (/\.mp4$/i.test(f.name) ? 1 : 0)
-  return files.filter(isVideo).sort((a, b) => score(b) - score(a) || Number(b.size ?? 0) - Number(a.size ?? 0))
+const baseName = (name: string) => name.replace(/(\.\w+)+$/, '').replace(/_(512kb|edit|h264|hd)$/i, '')
+
+/**
+ * Archive encodings → quality menu entries. Ordered by browser compatibility:
+ * IA's h.264 derivatives play everywhere, while "original" MPEG4 uploads are
+ * often MPEG-4 Part 2, which Chrome can't decode, so they go last.
+ */
+function quality(f: MetaFile): { label: string; height?: number; rank: number } {
+  const fmt = f.format ?? ''
+  if (/HD/i.test(fmt)) return { label: 'HD 720p', height: 720, rank: 0 }
+  if (/h\.264/i.test(fmt)) return { label: f.source === 'original' ? 'Original (h.264)' : 'Standard 480p', height: 480, rank: 1 }
+  if (/512Kb/i.test(fmt)) return { label: 'Data saver 360p', height: 360, rank: 2 }
+  if (/webm/i.test(fmt) || /\.webm$/i.test(f.name)) return { label: 'WebM', rank: 3 }
+  if (/ogg/i.test(fmt) || /\.ogv$/i.test(f.name)) return { label: 'Ogg 360p', height: 360, rank: 4 }
+  return { label: f.source === 'original' ? 'Original' : fmt || 'Video', rank: 5 }
 }
 
-/** Group multiple encodings of one video by their base name. */
+/** One entry per distinct video (episodes / parts), using its most compatible encoding. */
 function uniqueVideos(files: MetaFile[]): MetaFile[] {
   const seen = new Map<string, MetaFile>()
-  for (const f of rankFiles(files)) {
-    const base = f.name.replace(/(\.\w+)+$/, '').replace(/_(512kb|edit|h264)$/i, '')
+  for (const f of files.filter(isVideo).sort((a, b) => quality(a).rank - quality(b).rank)) {
+    const base = baseName(f.name)
     if (!seen.has(base)) seen.set(base, f)
   }
   return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+}
+
+const mimeOf = (name: string) => (/\.webm$/i.test(name) ? 'video/webm' : /\.ogv$/i.test(name) ? 'video/ogg' : 'video/mp4')
+
+/** All encodings of one video as quality options, plus any matching subtitle files. */
+function renditions(ident: string, files: MetaFile[], base: string): StreamSource[] {
+  const subs = files
+    .filter((f) => isSubtitleFile(f.name))
+    .map((f) => ({ src: download(ident, f.name), ...guessLang(f.name) }))
+    // Prefer subtitles named after this video; fall back to all of the item's subtitles.
+    .sort((a, b) => Number(b.src.includes(encodeURIComponent(base))) - Number(a.src.includes(encodeURIComponent(base))))
+  return files
+    .filter((f) => isVideo(f) && baseName(f.name) === base)
+    .map((f) => ({ f, q: quality(f) }))
+    .sort((a, b) => a.q.rank - b.q.rank)
+    .map<StreamSource>(({ f, q }) => ({
+      url: download(ident, f.name),
+      type: 'file',
+      mime: mimeOf(f.name),
+      label: q.label,
+      height: q.height,
+      subtitles: subs,
+    }))
 }
 
 const download = (id: string, name: string) =>
@@ -131,22 +165,12 @@ export const archive: VideoProvider = {
   },
 
   async stream(nativeId) {
+    // Episode ids look like "<identifier>/<file name>"; plain ids play the item's main video.
     const slash = nativeId.indexOf('/')
-    if (slash > 0) {
-      // Episode id: "<identifier>/<file name>"
-      const ident = nativeId.slice(0, slash)
-      return [{ url: download(ident, nativeId.slice(slash + 1)), type: 'file', mime: 'video/mp4' }]
-    }
-    const r = await getJSON<{ files?: MetaFile[] }>(`${BASE}/metadata/${encodeURIComponent(nativeId)}`)
+    const ident = slash > 0 ? nativeId.slice(0, slash) : nativeId
+    const r = await getJSON<{ files?: MetaFile[] }>(`${BASE}/metadata/${encodeURIComponent(ident)}`)
     const files = r.files ?? []
-    const best = rankFiles(files)
-    const vtt = files.filter((f) => /\.vtt$/i.test(f.name))
-    return best.slice(0, 3).map<StreamSource>((f) => ({
-      url: download(nativeId, f.name),
-      type: 'file',
-      mime: /\.webm$/i.test(f.name) ? 'video/webm' : /\.ogv$/i.test(f.name) ? 'video/ogg' : 'video/mp4',
-      label: f.format,
-      subtitles: vtt.map((v) => ({ src: download(nativeId, v.name), lang: 'en', label: v.name.replace(/\.vtt$/i, '') })),
-    }))
+    const main = slash > 0 ? nativeId.slice(slash + 1) : uniqueVideos(files)[0]?.name
+    return main ? renditions(ident, files, baseName(main)) : []
   },
 }

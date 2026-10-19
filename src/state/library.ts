@@ -18,7 +18,7 @@ interface LibraryStore {
   history: Interaction[]
   watchlist: MediaItem[]
   progress: Record<string, Progress>
-  /** Items seen while browsing — the on-device candidate pool for recommendations. */
+  /** Items seen while browsing - the on-device candidate pool for recommendations. */
   pool: MediaItem[]
   record: (item: MediaItem, signal: Signal) => void
   toggleWatchlist: (item: MediaItem) => void

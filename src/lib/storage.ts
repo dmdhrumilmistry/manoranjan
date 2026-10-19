@@ -1,4 +1,4 @@
-/** localStorage can throw (private mode, quota, disabled) — never let that break the app. */
+/** localStorage can throw (private mode, quota, disabled) - never let that break the app. */
 export function readJSON<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key)

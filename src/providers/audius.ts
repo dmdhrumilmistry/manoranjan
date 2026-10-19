@@ -4,7 +4,7 @@ import type { MediaItem } from './types'
 import { popularityFrom } from './util'
 
 /**
- * Audius — open, decentralised music platform with a free public API and
+ * Audius - open, decentralised music platform with a free public API and
  * full-length streams that artists publish themselves. No key needed.
  */
 const APP = 'manoranjan'

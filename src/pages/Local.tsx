@@ -4,6 +4,8 @@ import { VideoPlayer } from '../components/VideoPlayer'
 import { Icon } from '../components/Icon'
 import { useRoom } from '../state/room'
 import type { StreamSource } from '../providers'
+import { guessLang, isSubtitleFile, vttBlobUrl } from '../lib/subtitles'
+import { toast } from '../state/toast'
 
 type Capturable = HTMLMediaElement & { captureStream?: () => MediaStream; mozCaptureStream?: () => MediaStream }
 
@@ -12,6 +14,9 @@ interface LocalFile {
   file: File
   url: string
 }
+
+/** "Movie.en.srt" belongs to "Movie.mkv". */
+const stem = (name: string) => name.replace(/\.[^.]+$/, '').replace(/\.[a-z]{2,3}$/i, '').toLowerCase()
 
 /**
  * Play files from this computer. Nothing is uploaded: files are read through
@@ -31,7 +36,16 @@ export default function Local() {
   const casting = useRoom((s) => s.casting)
   const { startCast, stopCast } = useRoom.getState()
 
+  const [subs, setSubs] = useState<{ file: File; url: string }[]>([])
+
   const add = (list: FileList | null) => {
+    const subFiles = Array.from(list ?? []).filter((f) => isSubtitleFile(f.name))
+    if (subFiles.length) {
+      void Promise.all(subFiles.map(async (file) => ({ file, url: vttBlobUrl(await file.text()) }))).then((loaded) => {
+        setSubs((s) => [...s, ...loaded])
+        toast(`${loaded.length} subtitle file${loaded.length > 1 ? 's' : ''} added`, 'success')
+      })
+    }
     const media = Array.from(list ?? []).filter((f) => /^(video|audio)\//.test(f.type) || /\.(mkv|mp4|webm|mov|mp3|flac|m4a|ogg|wav)$/i.test(f.name))
     const next = media.map((file) => ({ key: `${file.name}-${file.size}-${file.lastModified}`, file, url: URL.createObjectURL(file) }))
     setFiles((f) => [...f, ...next.filter((n) => !f.some((x) => x.key === n.key))])
@@ -41,9 +55,25 @@ export default function Local() {
   // Release blob URLs when the page unmounts.
   const filesRef = useRef(files)
   filesRef.current = files
-  useEffect(() => () => filesRef.current.forEach((f) => URL.revokeObjectURL(f.url)), [])
+  const subsRef = useRef(subs)
+  subsRef.current = subs
+  useEffect(
+    () => () => {
+      filesRef.current.forEach((f) => URL.revokeObjectURL(f.url))
+      subsRef.current.forEach((s) => URL.revokeObjectURL(s.url))
+    },
+    [],
+  )
 
-  const sources = useMemo<StreamSource[]>(() => (current ? [{ url: current.url, type: 'file', mime: current.file.type }] : []), [current])
+  const sources = useMemo<StreamSource[]>(() => {
+    if (!current) return []
+    // Subtitles named after this video come first; any others are still selectable.
+    const mine = stem(current.file.name)
+    const subtitles = [...subs]
+      .sort((a, b) => Number(stem(b.file.name) === mine) - Number(stem(a.file.name) === mine))
+      .map((s) => ({ src: s.url, ...guessLang(s.file.name) }))
+    return [{ url: current.url, type: 'file', mime: current.file.type, label: 'Original', subtitles }]
+  }, [current, subs])
 
   const cast = useCallback(() => {
     setCastError(null)
@@ -94,9 +124,11 @@ export default function Local() {
         }}
       >
         <Icon name="upload" size={32} />
-        <strong>Drop video or audio files here, or click to choose</strong>
-        <span className="muted small">Played locally in your browser. Nothing is uploaded.</span>
-        <input type="file" accept="video/*,audio/*,.mkv" multiple onChange={(e) => add(e.target.files)} className="sr-only" />
+        <strong>Drop video, audio or subtitle files here, or click to choose</strong>
+        <span className="muted small">
+          Plays right in your browser. Nothing is uploaded. Add an .srt or .vtt file with the same name to get subtitles.
+        </span>
+        <input type="file" accept="video/*,audio/*,.mkv,.srt,.vtt" multiple onChange={(e) => add(e.target.files)} className="sr-only" />
       </label>
 
       {current && (

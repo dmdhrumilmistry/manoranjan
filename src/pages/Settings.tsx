@@ -4,6 +4,7 @@ import { useLibrary } from '../state/library'
 import { jellyfin, tmdb } from '../providers'
 import { blockedCount } from '../lib/shield'
 import { Icon } from '../components/Icon'
+import { toast } from '../state/toast'
 
 const BACKUP_KEYS = [
   'region', 'jellyfinUrl', 'jellyfinUserId', 'archiveEnabled', 'audiusEnabled', 'displayName', 'theme', 'turnUrl', 'turnUser',
@@ -70,29 +71,29 @@ export default function Settings() {
         for (const k of BACKUP_KEYS) if (k in data.settings) patch[k] = data.settings[k]
         s.set(patch)
       }
-      alert('Backup restored.')
+      toast('Backup restored', 'success')
     } catch (e) {
-      alert(`Import failed: ${e instanceof Error ? e.message : e}`)
+      toast(`Import failed: ${e instanceof Error ? e.message : e}`, 'error')
     }
   }
 
   return (
     <div className="page page--settings">
       <h1>Settings</h1>
-      <p className="muted">Everything here is stored only in this browser.</p>
+      <p className="muted">Everything here is saved only in this browser and never sent anywhere.</p>
 
       <section className="card-section">
         <h2>Sources</h2>
         <label className="toggle">
           <input type="checkbox" checked={s.archiveEnabled} onChange={(e) => s.set({ archiveEnabled: e.target.checked })} />
           <span>
-            <strong>Internet Archive</strong> — public-domain films, classic TV and cartoons
+            <strong>Internet Archive</strong> - public-domain films, classic TV and cartoons
           </span>
         </label>
         <label className="toggle">
           <input type="checkbox" checked={s.audiusEnabled} onChange={(e) => s.set({ audiusEnabled: e.target.checked })} />
           <span>
-            <strong>Audius</strong> — free full-length music from independent artists
+            <strong>Audius</strong> - free full-length music from independent artists
           </span>
         </label>
 
@@ -117,7 +118,7 @@ export default function Settings() {
         <Status c={tm} />
 
         <h3>Jellyfin (your own media server)</h3>
-        <Field label="Server URL" hint="e.g. https://media.example.com — must be HTTPS when this site is on GitHub Pages.">
+        <Field label="Server URL" hint="e.g. https://media.example.com - must be HTTPS when this site is on GitHub Pages.">
           <input type="url" value={s.jellyfinUrl} onChange={(e) => s.set({ jellyfinUrl: e.target.value })} placeholder="https://" />
         </Field>
         <Field label="API key" hint="Dashboard → API Keys → +">
@@ -185,6 +186,9 @@ export default function Settings() {
             onClick={() => confirm('Clear watch history, My list and recommendations?') && lib.clear()}
           >
             Clear history
+          </button>
+          <button className="btn" onClick={() => { s.set({ onboarded: false }); toast('The guide is back on the Home page') }}>
+            Show getting-started guide
           </button>
           <button className="btn btn--ghost" onClick={() => confirm('Reset all settings?') && s.reset()}>
             Reset settings

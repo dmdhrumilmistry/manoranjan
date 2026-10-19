@@ -9,11 +9,11 @@ export default function About() {
       </p>
       <h2>Sources</h2>
       <ul>
-        <li><strong>Internet Archive</strong> — public-domain and openly licensed films, TV and cartoons.</li>
-        <li><strong>Jellyfin</strong> — your own media server, for media you own.</li>
-        <li><strong>Audius</strong> — music published by artists on the open Audius network.</li>
-        <li><strong>TMDB</strong> — metadata and artwork; this product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability by JustWatch.</li>
-        <li><strong>Your files</strong> — played locally from your device; nothing is uploaded.</li>
+        <li><strong>Internet Archive</strong> - public-domain and openly licensed films, TV and cartoons.</li>
+        <li><strong>Jellyfin</strong> - your own media server, for media you own.</li>
+        <li><strong>Audius</strong> - music published by artists on the open Audius network.</li>
+        <li><strong>TMDB</strong> - metadata and artwork; this product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability by JustWatch.</li>
+        <li><strong>Your files</strong> - played locally from your device; nothing is uploaded.</li>
       </ul>
       <h2>Parties</h2>
       <p>

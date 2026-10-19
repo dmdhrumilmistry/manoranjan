@@ -3,7 +3,7 @@
  *
  * Every peer is equal (no host). Each local user action produces a
  * PlaybackEvent stamped with a Lamport clock; peers keep the event with the
- * highest (clock, peerId) — a deterministic last-writer-wins that converges
+ * highest (clock, peerId) - a deterministic last-writer-wins that converges
  * without a server. Positions are extrapolated by one-way latency so a
  * receiver jumps to where the sender *is now*, not where it was.
  */

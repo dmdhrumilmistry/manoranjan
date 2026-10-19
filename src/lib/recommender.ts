@@ -83,7 +83,7 @@ function cosine(a: Vec, b: Vec): number {
 export interface Scored {
   item: MediaItem
   score: number
-  /** Top tags that drove the match — shown to the user as "Because you like …". */
+  /** Top tags that drove the match - shown to the user as "Because you like …". */
   reasons: string[]
 }
 

@@ -1,7 +1,7 @@
 /**
  * Runtime "shield" layered on top of the build-time CSP:
  *  - blocks programmatic popups/pop-unders (the main ad vector on streaming
- *    sites). The app itself never calls window.open — outbound links are
+ *    sites). The app itself never calls window.open - outbound links are
  *    plain <a target="_blank">.
  *  - forces every external link to open without opener or referrer.
  */

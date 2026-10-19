@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export interface Settings {
-  /** TMDB v4 read access token or v3 API key (optional — enables rich metadata & legal "where to watch"). */
+  /** TMDB v4 read access token or v3 API key (optional - enables rich metadata & legal "where to watch"). */
   tmdbKey: string
   region: string
   jellyfinUrl: string
@@ -16,6 +16,8 @@ export interface Settings {
   turnUrl: string
   turnUser: string
   turnPass: string
+  /** Hides the "Start here" guide on Home once dismissed. */
+  onboarded: boolean
 }
 
 interface SettingsStore extends Settings {
@@ -36,6 +38,7 @@ const defaults: Settings = {
   turnUrl: '',
   turnUser: '',
   turnPass: '',
+  onboarded: false,
 }
 
 export const useSettings = create<SettingsStore>()(

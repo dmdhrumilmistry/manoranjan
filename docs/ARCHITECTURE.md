@@ -20,7 +20,7 @@
 | Jellyfin | Your own server | API key | yes (direct / HLS transcode) |
 | TMDB | Metadata, trailers, JustWatch "where to watch" | free key | no: links out to licensed services |
 | Audius | Independent music | none | yes |
-| Local files / URL | Anything you have the right to play | — | yes |
+| Local files / URL | Anything you have the right to play | - | yes |
 
 Providers implement `VideoProvider` (`src/providers/types.ts`) and are queried in parallel with
 `Promise.allSettled`, so one source failing never blanks a page. To add a source, implement the

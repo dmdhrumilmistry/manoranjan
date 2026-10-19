@@ -3,7 +3,12 @@
 An ad-free, tracker-free entertainment hub that runs entirely in the browser and is hosted for
 free on GitHub Pages.
 
-* 🎬 **Films & series**: public-domain classics from the Internet Archive and **your own Jellyfin library**, in a custom player (keyboard shortcuts, resume, PiP, captions, auto-next episode).
+* 🎬 **Films & series**: public-domain classics from the Internet Archive and **your own Jellyfin library**.
+* ▶️ **A proper player**:
+  * Quality switching (HD / 1080p / 720p / Auto) and subtitles, including loading your own `.srt`/`.vtt` with size and sync controls.
+  * Double-click or double-tap the sides to skip 10s, with a seek-bar time preview.
+  * Speed, audio tracks, zoom-to-fill, picture-in-picture, resume, and an "Up next" episode countdown.
+  * Keyboard shortcuts (press `?`). Your choices are remembered.
 * 🎵 **Music**: full tracks from independent artists on Audius, with a queue, shuffle/repeat and lock-screen controls.
 * ✨ **On-device recommendations**: computed from what you watch, finish, like and dislike. Nothing leaves your browser.
 * 👥 **Watch & listen parties**: playback stays in sync across friends, with text chat and **WebRTC voice chat**. Peer-to-peer, with no accounts and no server.

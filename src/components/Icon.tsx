@@ -37,6 +37,16 @@ const PATHS = {
   external: 'M14 3h7v7h-2V6.4l-9.3 9.3-1.4-1.4L17.6 5H14V3zM5 5h6v2H5v12h12v-6h2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z',
   sun: 'M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM1 11h3v2H1v-2zm19 0h3v2h-3v-2zM4.2 2.8l2.1 2.1-1.4 1.4-2.1-2.1 1.4-1.4zm14.9 14.9 2.1 2.1-1.4 1.4-2.1-2.1 1.4-1.4zM2.8 19.8l2.1-2.1 1.4 1.4-2.1 2.1-1.4-1.4zM17.7 4.9l2.1-2.1 1.4 1.4-2.1 2.1-1.4-1.4z',
   sparkle: 'M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7L12 2zm7 12 1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z',
+  chevronRight: 'M9.3 6.7 10.7 5.3 17.4 12l-6.7 6.7-1.4-1.4 5.3-5.3z',
+  chevronLeft: 'M14.7 6.7 13.3 5.3 6.6 12l6.7 6.7 1.4-1.4L9.4 12z',
+  replay: 'M12 5V2L7 6l5 4V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z',
+  skipForward: 'M12 5V2l5 4-5 4V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z',
+  keyboard: 'M3 6h18v12H3V6zm2 2v2h2V8H5zm4 0v2h2V8H9zm4 0v2h2V8h-2zm4 0v2h2V8h-2zM5 12v2h2v-2H5zm4 0v2h6v-2H9zm8 0v2h2v-2h-2z',
+  fit: 'M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zM4 14h2v4h4v2H4v-6zm14 0h2v6h-6v-2h4v-4zM9 9h6v6H9V9z',
+  speed: 'M12 4a9 9 0 0 0-7.8 13.5l1.7-1A7 7 0 1 1 19 13h2a9 9 0 0 0-9-9zm4.2 4.4-5.6 4.2a1.5 1.5 0 1 0 2 2.1l3.6-6.3z',
+  audio: 'M12 3a9 9 0 0 0-9 9v6a3 3 0 0 0 3 3h2v-8H5v-1a7 7 0 0 1 14 0v1h-3v8h2a3 3 0 0 0 3-3v-6a9 9 0 0 0-9-9z',
+  hd: 'M3 5h18v14H3V5zm3 3v8h2v-3h2v3h2V8h-2v3H8V8H6zm8 0v8h3a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-3zm2 2h1v4h-1v-4z',
+  info: 'M11 7h2v2h-2V7zm0 4h2v6h-2v-6zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z',
 } as const
 
 export type IconName = keyof typeof PATHS

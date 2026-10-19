@@ -7,14 +7,14 @@ import { Icon, type IconName } from './Icon'
 import { MusicBar } from './MusicBar'
 import { PartyPanel } from './PartyPanel'
 import { PartyFollower } from './PartyFollower'
+import { Toasts } from './Toasts'
 
-const NAV: { to: string; label: string; icon: IconName }[] = [
-  { to: '/', label: 'Home', icon: 'home' },
-  { to: '/movies', label: 'Movies', icon: 'film' },
-  { to: '/series', label: 'Series', icon: 'tv' },
-  { to: '/music', label: 'Music', icon: 'music' },
-  { to: '/local', label: 'My files', icon: 'upload' },
-  { to: '/settings', label: 'Settings', icon: 'settings' },
+const NAV: { to: string; label: string; icon: IconName; hint: string }[] = [
+  { to: '/', label: 'Home', icon: 'home', hint: 'Recommendations and what’s trending' },
+  { to: '/movies', label: 'Movies', icon: 'film', hint: 'Free classic films' },
+  { to: '/series', label: 'TV Shows', icon: 'tv', hint: 'Classic TV and cartoons' },
+  { to: '/music', label: 'Music', icon: 'music', hint: 'Free music from independent artists' },
+  { to: '/local', label: 'My Files', icon: 'upload', hint: 'Play videos from your device' },
 ]
 
 export function Layout() {
@@ -36,7 +36,7 @@ export function Layout() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement
-      if (e.key === '/' && !/INPUT|TEXTAREA/.test(t.tagName) && !t.isContentEditable) {
+      if (e.key === '/' && !/INPUT|TEXTAREA/.test(t.tagName) && !t.isContentEditable && !t.closest('.vp')) {
         e.preventDefault()
         document.getElementById('global-search')?.focus()
       }
@@ -45,6 +45,8 @@ export function Layout() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  const partyLabel = inRoom ? `Watching together · ${peers + 1}` : 'Watch together'
+
   return (
     <div className={`app ${hasTrack ? 'app--with-bar' : ''} ${partyOpen ? 'app--party' : ''}`}>
       <a className="skip-link" href="#main">
@@ -52,13 +54,13 @@ export function Layout() {
       </a>
       <header className="topbar">
         <NavLink to="/" className="brand" aria-label="Manoranjan home">
-          <img src="./favicon.svg" alt="" width={28} height={28} />
+          <img src="./favicon.svg" alt="" width={30} height={30} />
           <span>Manoranjan</span>
         </NavLink>
         <nav className="nav" aria-label="Primary">
           {NAV.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.to === '/'} className="nav__link">
-              <Icon name={n.icon} size={20} />
+            <NavLink key={n.to} to={n.to} end={n.to === '/'} className="nav__link" title={n.hint}>
+              <Icon name={n.icon} size={18} />
               <span>{n.label}</span>
             </NavLink>
           ))}
@@ -75,35 +77,56 @@ export function Layout() {
           <input
             id="global-search"
             type="search"
-            placeholder="Search films, series, music…  ( / )"
+            placeholder="Search movies, shows, music…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             aria-label="Search"
           />
+          <kbd className="search__kbd" aria-hidden>
+            /
+          </kbd>
         </form>
         <button
           className={`party-toggle ${inRoom ? 'party-toggle--live' : ''}`}
           onClick={() => setPartyOpen((o) => !o)}
           aria-expanded={partyOpen}
-          aria-label="Watch party"
+          aria-label={partyLabel}
+          title="Watch or listen in sync with friends, with chat and voice"
         >
-          <Icon name="users" size={20} />
-          <span>{inRoom ? `Party · ${peers + 1}` : 'Party'}</span>
+          {inRoom && <span className="live-dot" aria-hidden />}
+          <Icon name="users" size={18} />
+          <span>{partyLabel}</span>
           {unread > 0 && !partyOpen && <span className="badge-dot">{unread > 9 ? '9+' : unread}</span>}
         </button>
+        <NavLink to="/settings" className="icon-btn topbar__settings" aria-label="Settings" title="Settings">
+          <Icon name="settings" size={20} />
+        </NavLink>
       </header>
 
       <main id="main" className="main" tabIndex={-1}>
         <Outlet context={{ openParty: () => setPartyOpen(true) }} />
         <footer className="footer">
-          <Icon name="shield" size={16} /> No ads · no trackers · no accounts. Everything personal stays in your browser.
+          <span>
+            <Icon name="shield" size={16} /> No ads, no trackers, no account. Your history stays on this device.
+          </span>
           <NavLink to="/about">About &amp; legal</NavLink>
         </footer>
       </main>
 
+      {/* Mobile tab bar lives outside the header so `position: fixed` is relative to the viewport. */}
+      <nav className="tabbar" aria-label="Primary">
+        {NAV.map((n) => (
+          <NavLink key={n.to} to={n.to} end={n.to === '/'} className="tabbar__link">
+            <Icon name={n.icon} size={22} />
+            <span>{n.label}</span>
+          </NavLink>
+        ))}
+      </nav>
+
       <PartyPanel open={partyOpen} onClose={() => setPartyOpen(false)} />
       <PartyFollower />
       <MusicBar />
+      <Toasts />
     </div>
   )
 }

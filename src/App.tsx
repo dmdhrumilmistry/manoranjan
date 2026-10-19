@@ -31,6 +31,7 @@ const router = createHashRouter([
       { path: '/music', element: page(<Music />) },
       { path: '/search', element: page(<Search />) },
       { path: '/local', element: page(<Local />) },
+      { path: '/party', element: page(<Party />) },
       { path: '/party/:roomId', element: page(<Party />) },
       { path: '/settings', element: page(<Settings />) },
       { path: '/about', element: page(<About />) },

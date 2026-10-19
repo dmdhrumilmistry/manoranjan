@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useRoom } from '../state/room'
 import { usePlayer } from '../state/player'
 import type { MediaItem } from '../providers/types'
+import { toast } from '../state/toast'
 
 export const watchPath = (id: string, streamId?: string) =>
   `/watch/${encodeURIComponent(id)}${streamId ? `?ep=${encodeURIComponent(streamId)}` : ''}`
@@ -17,6 +18,9 @@ export function PartyFollower() {
       useRoom.subscribe((s, prev) => {
         if (!s.remote || s.remote === prev.remote) return
         const m = s.remote.event.media
+        const who = s.peers[s.remote.event.peerId]?.name ?? 'A friend'
+        const isNew = prev.remote?.event.media.id !== m.id || prev.remote?.event.media.streamId !== m.streamId
+        if (isNew) toast(`${who} is playing “${m.title}”`)
         if (m.kind === 'video') {
           const target = watchPath(m.id, m.streamId)
           if (location.pathname + location.search !== target) navigate(target)
