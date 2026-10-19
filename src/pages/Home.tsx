@@ -5,6 +5,9 @@ import { useRecommendations, useTrending, useTrendingMusic } from '../hooks/useC
 import { continueWatching, useLibrary } from '../state/library'
 import { useSettings } from '../state/settings'
 import type { MediaItem } from '../providers'
+import { anilist } from '../providers/anilist'
+import { useAsync } from '../hooks/useAsync'
+import { useEffect } from 'react'
 
 function Welcome() {
   return (
@@ -104,6 +107,11 @@ export function Home() {
   const movies = useTrending('movie')
   const series = useTrending('series')
   const music = useTrendingMusic()
+  const anime = useAsync(() => anilist.freeOnYouTube(), [])
+  const addToPool = useLibrary((s) => s.addToPool)
+  useEffect(() => {
+    if (anime.data?.length) addToPool(anime.data)
+  }, [anime.data, addToPool])
   const recs = useRecommendations('video')
   const musicRecs = useRecommendations('track')
   const progress = useLibrary((s) => s.progress)
@@ -145,6 +153,15 @@ export function Home() {
         error={series.error}
         onRetry={series.reload}
         action={<Link to="/series">See all</Link>}
+      />
+      <Row
+        title="Free anime"
+        subtitle="Official releases from the rights holders, free to watch here"
+        items={anime.data ?? []}
+        loading={anime.loading}
+        error={anime.error}
+        onRetry={anime.reload}
+        action={<Link to="/anime">All anime</Link>}
       />
       <Row title="Music for you" subtitle="Based on what you’ve listened to" items={musicRecs.items} reasons={musicRecs.reasons} />
       <Row

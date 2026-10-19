@@ -32,8 +32,12 @@ export interface SubtitleSource {
  */
 export interface StreamSource {
   url: string
-  /** `hls` streams are played through hls.js where the browser lacks native support. */
-  type: 'hls' | 'file'
+  /**
+   * `hls` streams are played through hls.js where the browser lacks native support.
+   * `youtube` sources are official free uploads, played in the privacy-enhanced embed.
+   */
+  type: 'hls' | 'file' | 'youtube'
+  youtube?: { videoId?: string; playlistId?: string }
   mime?: string
   /** Shown in the quality menu, e.g. "1080p", "HD 720p", "Original". */
   label?: string
@@ -51,12 +55,14 @@ export interface Episode {
   thumbnail?: string
 }
 
-export type ProviderId = 'archive' | 'jellyfin' | 'tmdb' | 'audius' | 'url'
+export type ProviderId = 'archive' | 'jellyfin' | 'tmdb' | 'anilist' | 'audius' | 'url'
 
 export interface VideoProvider {
   id: ProviderId
   name: string
   enabled(): boolean
+  /** false = searchable, but kept out of the general Movies/TV feeds (it has its own page). */
+  browse?: boolean
   trending(kind: 'movie' | 'series'): Promise<MediaItem[]>
   search(query: string): Promise<MediaItem[]>
   details(nativeId: string): Promise<MediaItem | null>

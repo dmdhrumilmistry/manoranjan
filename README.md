@@ -9,6 +9,7 @@ free on GitHub Pages.
   * Double-click or double-tap the sides to skip 10s, with a seek-bar time preview.
   * Speed, audio tracks, zoom-to-fill, picture-in-picture, resume, and an "Up next" episode countdown.
   * Keyboard shortcuts (press `?`). Your choices are remembered.
+* 🍥 **Anime**: browse trending, seasonal and top-rated anime from AniList (no key). Shows the rights holders publish free on YouTube (Muse Asia, Ani-One and others) play right in the app, with watch-party sync. Everything else links to the services that stream it legally.
 * 🎵 **Music**: full tracks from independent artists on Audius, with a queue, shuffle/repeat and lock-screen controls.
 * ✨ **On-device recommendations**: computed from what you watch, finish, like and dislike. Nothing leaves your browser.
 * 👥 **Watch & listen parties**: playback stays in sync across friends, with text chat and **WebRTC voice chat**. Peer-to-peer, with no accounts and no server.

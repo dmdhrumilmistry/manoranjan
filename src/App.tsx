@@ -7,6 +7,7 @@ import { ErrorPage } from './pages/ErrorPage'
 // Route-level code splitting keeps the first load small.
 const Browse = lazy(() => import('./pages/Browse'))
 const Title = lazy(() => import('./pages/Title'))
+const Anime = lazy(() => import('./pages/Anime'))
 const Watch = lazy(() => import('./pages/Watch'))
 const Music = lazy(() => import('./pages/Music'))
 const Search = lazy(() => import('./pages/Search'))
@@ -26,6 +27,7 @@ const router = createHashRouter([
       { path: '/', element: <Home /> },
       { path: '/movies', element: page(<Browse kind="movie" />) },
       { path: '/series', element: page(<Browse kind="series" />) },
+      { path: '/anime', element: page(<Anime />) },
       { path: '/title/:id', element: page(<Title />) },
       { path: '/watch/:id', element: page(<Watch />) },
       { path: '/music', element: page(<Music />) },
