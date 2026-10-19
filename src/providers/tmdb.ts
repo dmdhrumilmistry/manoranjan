@@ -3,7 +3,7 @@ import { settings } from '../state/settings'
 import type { MediaItem, VideoProvider } from './types'
 
 /**
- * TMDB — metadata, artwork, trailers and *legal* "where to watch" offers
+ * TMDB - metadata, artwork, trailers and *legal* "where to watch" offers
  * (JustWatch data). TMDB does not host video, so this provider never streams;
  * the detail page links out to licensed services instead.
  *

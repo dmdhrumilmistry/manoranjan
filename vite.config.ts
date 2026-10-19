@@ -17,7 +17,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "media-src 'self' blob: https:",
-  "connect-src 'self' https: wss:",
+  "connect-src 'self' blob: https: wss:",
   "font-src 'self'",
   'frame-src https://www.youtube-nocookie.com',
   "worker-src 'self' blob:",

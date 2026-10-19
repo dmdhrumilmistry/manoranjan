@@ -7,6 +7,7 @@ import { VideoPlayer } from '../components/VideoPlayer'
 import { watchPath } from '../components/PartyFollower'
 import type { MediaRef } from '../lib/sync'
 import { useRoom } from '../state/room'
+import { Icon } from '../components/Icon'
 
 /** `url:` ids carry a direct, user-supplied stream URL (see My files → Play a link). */
 export function urlItem(url: string): MediaItem {
@@ -65,9 +66,13 @@ export default function Watch() {
     },
     [it, ep],
   )
-  const onEnded = useCallback(() => {
-    if (nextEp) navigate(watchPath(fullId, nextEp.id), { replace: true })
-  }, [nextEp, navigate, fullId])
+  const next = useMemo(
+    () =>
+      nextEp
+        ? { label: `E${nextEp.number ?? ''} · ${nextEp.title}`, play: () => navigate(watchPath(fullId, nextEp.id), { replace: true }) }
+        : undefined,
+    [nextEp, navigate, fullId],
+  )
 
   return (
     <div className="page page--watch">
@@ -78,10 +83,11 @@ export default function Watch() {
           sources={sources.data}
           poster={it?.backdrop ?? it?.poster}
           title={it?.title ?? ''}
+          subtitle={thisEp ? `Episode ${thisEp.number}: ${thisEp.title}` : undefined}
           startAt={startAt}
           party={party}
           onProgress={onProgress}
-          onEnded={onEnded}
+          next={next}
         />
       ) : (
         <div className="vp vp--empty">
@@ -106,8 +112,12 @@ export default function Watch() {
           )}
         </div>
       </div>
-      <p className="small muted">
-        Keys: Space/K play · J/L ±10s · ←/→ ±5s · ↑/↓ volume · F fullscreen · M mute · C captions · 0–9 jump
+      <p className="small muted watch__hint">
+        <Icon name="info" size={14} />
+        <span className="hint--mouse">
+          Tip: double-click the left or right side of the video to skip 10 seconds. Press <kbd>?</kbd> for all shortcuts.
+        </span>
+        <span className="hint--touch">Tip: double-tap the left or right side of the video to skip 10 seconds.</span>
       </p>
     </div>
   )

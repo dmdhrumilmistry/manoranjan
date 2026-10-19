@@ -110,7 +110,7 @@ function watchSpeaking(id: string, stream: MediaStream, onChange: (v: boolean) =
       void ctx.close()
     })
   } catch {
-    /* AudioContext unavailable — indicator just stays off */
+    /* AudioContext unavailable - indicator just stays off */
   }
 }
 
@@ -299,7 +299,7 @@ export const useRoom = create<RoomStore>()((set, get) => {
       get().stopCast()
       castStream = { stream, title }
       room.addStream(stream, { metadata: castMeta(title) })
-      send.chat?.({ id: uid(), text: `📺 Streaming “${title.slice(0, 120)}” — open the party panel to watch.` })
+      send.chat?.({ id: uid(), text: `📺 Streaming “${title.slice(0, 120)}” - open the party panel to watch.` })
       set({ casting: title })
     },
 

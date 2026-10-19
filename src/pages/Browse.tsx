@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
-import { Grid } from '../components/Row'
+import { ErrorNote, Grid } from '../components/Row'
 import { useRecommendations, useTrending } from '../hooks/useCatalog'
 
 export default function Browse({ kind }: { kind: 'movie' | 'series' }) {
-  const { data = [], loading, error } = useTrending(kind)
+  const { data = [], loading, error, reload } = useTrending(kind)
   const recs = useRecommendations(kind)
   const [tag, setTag] = useState<string | null>(null)
   const [sort, setSort] = useState<'trending' | 'foryou' | 'newest' | 'az'>('trending')
@@ -27,9 +27,16 @@ export default function Browse({ kind }: { kind: 'movie' | 'series' }) {
   return (
     <div className="page">
       <header className="page__head">
-        <h1>{kind === 'movie' ? 'Films' : 'Series'}</h1>
+        <div>
+          <h1>{kind === 'movie' ? 'Movies' : 'TV Shows'}</h1>
+          <p className="muted">
+            {kind === 'movie'
+              ? 'Free public-domain films, plus anything in your connected library.'
+              : 'Classic TV episodes and cartoons, plus shows from your library.'}
+          </p>
+        </div>
         <label className="select">
-          <span className="sr-only">Sort</span>
+          <span className="select__label">Sort by</span>
           <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
             <option value="trending">Trending</option>
             <option value="foryou">For you</option>
@@ -50,8 +57,15 @@ export default function Browse({ kind }: { kind: 'movie' | 'series' }) {
           ))}
         </div>
       )}
-      {error && <p className="notice">{error.message}</p>}
-      <Grid items={items} loading={loading} />
+      <ErrorNote error={error} onRetry={reload} what={kind === 'movie' ? 'movies' : 'TV shows'} />
+      {!loading && !error && !items.length ? (
+        <div className="empty empty--inline">
+          <p>Nothing matches this filter.</p>
+          <button className="btn" onClick={() => setTag(null)}>Show everything</button>
+        </div>
+      ) : (
+        <Grid items={items} loading={loading} />
+      )}
     </div>
   )
 }

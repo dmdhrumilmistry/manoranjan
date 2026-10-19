@@ -53,7 +53,17 @@ export default function Title() {
   }, [item, lib.pool])
 
   if (details.loading) return <div className="page-loading" aria-busy />
-  if (!item) return <div className="empty"><h1>Title not found</h1><p className="muted">{details.error?.message}</p></div>
+  if (!item)
+    return (
+      <div className="empty">
+        <h1>{details.error ? 'Couldn’t load this title' : 'Title not found'}</h1>
+        <p className="muted">{details.error ? 'The source may be busy or offline. Please try again.' : 'It may have been removed from its source.'}</p>
+        <div className="hero__actions">
+          {details.error && <button className="btn btn--primary" onClick={details.reload}>Try again</button>}
+          <Link className="btn" to="/">Back to Home</Link>
+        </div>
+      </div>
+    )
 
   const canPlay = item.provider !== 'tmdb'
   const firstEp = episodes.data?.[0]
@@ -86,15 +96,22 @@ export default function Title() {
                   <Icon name="play" /> {progress ? 'Resume' : 'Play'}
                 </Link>
               )}
-              <button className="btn" onClick={() => lib.toggleWatchlist(item)} aria-pressed={inList}>
-                <Icon name={inList ? 'check' : 'plus'} size={18} /> My list
+              {!canPlay && (
+                <a className="btn btn--primary btn--lg" href="#where-to-watch" onClick={(e) => { e.preventDefault(); document.getElementById('where-to-watch')?.scrollIntoView({ behavior: 'smooth' }) }}>
+                  <Icon name="external" size={18} /> Where to watch
+                </a>
+              )}
+              <button className="btn btn--glass" onClick={() => lib.toggleWatchlist(item)} aria-pressed={inList}>
+                <Icon name={inList ? 'check' : 'plus'} size={18} /> {inList ? 'In My List' : 'My List'}
               </button>
-              <button className="icon-btn" aria-pressed={rating === 'like'} onClick={() => lib.record(item, 'like')} aria-label="I like this">
-                <Icon name="thumbsUp" size={18} />
-              </button>
-              <button className="icon-btn" aria-pressed={rating === 'dislike'} onClick={() => lib.record(item, 'dislike')} aria-label="Not for me">
-                <Icon name="thumbsDown" size={18} />
-              </button>
+              <div className="rate" role="group" aria-label="Rate this to improve recommendations">
+                <button className="icon-btn" aria-pressed={rating === 'like'} onClick={() => lib.record(item, 'like')} aria-label="I like this" title="I like this: show me more like it">
+                  <Icon name="thumbsUp" size={18} />
+                </button>
+                <button className="icon-btn" aria-pressed={rating === 'dislike'} onClick={() => lib.record(item, 'dislike')} aria-label="Not for me" title="Not for me: show me less like it">
+                  <Icon name="thumbsDown" size={18} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -117,8 +134,15 @@ export default function Title() {
       )}
 
       {provider?.id === 'tmdb' && (
-        <section className="section">
+        <section className="section" id="where-to-watch">
           <h2>Where to watch</h2>
+          <p className="callout">
+            <Icon name="info" size={18} />
+            <span>
+              This title isn’t free to stream here. If a free copy or a copy in your own library exists, it’s listed below. Otherwise,
+              these are the services that stream it legally.
+            </span>
+          </p>
           {matches.data && matches.data.length > 0 && (
             <>
               <p className="muted">Playable here:</p>
@@ -167,7 +191,7 @@ export default function Title() {
         </section>
       )}
 
-      <Row title="More like this" items={similar.length ? similar : extras.data?.similar ?? []} />
+      <Row title="More like this" subtitle="Similar titles you might enjoy" items={similar.length ? similar : extras.data?.similar ?? []} />
     </div>
   )
 }

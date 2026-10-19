@@ -19,13 +19,28 @@ export interface MediaItem {
   popularity?: number
 }
 
+export interface SubtitleSource {
+  src: string
+  lang: string
+  label: string
+}
+
+/**
+ * One playable rendition. A title's sources are ordered by preference and
+ * double as the quality menu; on a playback error the player falls through
+ * to the next one.
+ */
 export interface StreamSource {
   url: string
   /** `hls` streams are played through hls.js where the browser lacks native support. */
   type: 'hls' | 'file'
   mime?: string
+  /** Shown in the quality menu, e.g. "1080p", "HD 720p", "Original". */
   label?: string
-  subtitles?: { src: string; lang: string; label: string }[]
+  /** Vertical resolution when known; drives the HD badge. */
+  height?: number
+  /** SRT or VTT; converted to VTT by the player. */
+  subtitles?: SubtitleSource[]
 }
 
 export interface Episode {

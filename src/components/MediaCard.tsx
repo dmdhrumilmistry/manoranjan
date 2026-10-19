@@ -5,12 +5,13 @@ import { useLibrary } from '../state/library'
 import { usePlayer } from '../state/player'
 import { Icon } from './Icon'
 
-const PROVIDER_LABEL: Record<string, string> = {
-  archive: 'Public domain',
-  jellyfin: 'My library',
-  tmdb: 'Info',
-  audius: 'Audius',
-  url: 'Link',
+/** Plain-language badge telling people what happens when they click. */
+const BADGE: Record<string, { label: string; tone: string; title: string }> = {
+  archive: { label: 'Free', tone: 'free', title: 'Public domain: free to stream here' },
+  jellyfin: { label: 'My library', tone: 'mine', title: 'From your Jellyfin server' },
+  tmdb: { label: 'Info', tone: 'info', title: 'Details, trailer and where to watch it legally' },
+  audius: { label: 'Music', tone: 'music', title: 'Free music from Audius' },
+  url: { label: 'Link', tone: 'mine', title: 'A video link you added' },
 }
 
 export const MediaCard = memo(function MediaCard({ item, reason, list }: { item: MediaItem; reason?: string; list?: MediaItem[] }) {
@@ -29,7 +30,11 @@ export const MediaCard = memo(function MediaCard({ item, reason, list }: { item:
             {item.title.slice(0, 1)}
           </div>
         )}
-        <span className="card__badge">{PROVIDER_LABEL[item.provider]}</span>
+        {BADGE[item.provider] && (
+          <span className={`card__badge card__badge--${BADGE[item.provider]!.tone}`} title={BADGE[item.provider]!.title}>
+            {BADGE[item.provider]!.label}
+          </span>
+        )}
         <span className="card__play" aria-hidden>
           <Icon name="play" size={28} />
         </span>
