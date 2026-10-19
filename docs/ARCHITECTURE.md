@@ -19,6 +19,7 @@
 | Internet Archive | Public-domain films, classic TV, cartoons | none | yes (MP4) |
 | Jellyfin | Your own server | API key | yes (direct / HLS transcode) |
 | TMDB | Metadata, trailers, JustWatch "where to watch" | free key | no: links out to licensed services |
+| AniList | Anime catalogue and official streaming links | none | official free YouTube releases only (privacy-enhanced embed) |
 | Audius | Independent music | none | yes |
 | Local files / URL | Anything you have the right to play | - | yes |
 
@@ -37,6 +38,13 @@ src/
   components/  VideoPlayer, MusicBar, PartyPanel, cards/rows, layout
   pages/       route-level, lazy-loaded
 ```
+
+## YouTube embeds
+
+Official free releases play in `youtube-nocookie.com` embeds. No YouTube script is loaded, because the CSP allows only
+our own scripts. Instead, `YouTubeBridge` (`src/lib/youtube.ts`) speaks the embed's postMessage protocol and exposes a
+minimal media-element interface. That way the same party-sync hook and progress tracking work for YouTube as for the
+built-in player. The iframe is sandboxed without `allow-popups`.
 
 ## Party sync protocol
 

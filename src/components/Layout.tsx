@@ -13,6 +13,7 @@ const NAV: { to: string; label: string; icon: IconName; hint: string }[] = [
   { to: '/', label: 'Home', icon: 'home', hint: 'Recommendations and what’s trending' },
   { to: '/movies', label: 'Movies', icon: 'film', hint: 'Free classic films' },
   { to: '/series', label: 'TV Shows', icon: 'tv', hint: 'Classic TV and cartoons' },
+  { to: '/anime', label: 'Anime', icon: 'star', hint: 'Anime: free official releases and where to watch the rest' },
   { to: '/music', label: 'Music', icon: 'music', hint: 'Free music from independent artists' },
   { to: '/local', label: 'My Files', icon: 'upload', hint: 'Play videos from your device' },
 ]

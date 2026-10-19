@@ -2414,3 +2414,80 @@ details[open] {
     display: none !important;
   }
 }
+
+/* ---------- Anime & YouTube ---------- */
+.yt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.yt__frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: calc(100vh - var(--topbar-h) - var(--bar-h) - 80px);
+  border: 0;
+  border-radius: var(--radius);
+  background: #000;
+  box-shadow: var(--shadow);
+}
+.yt__note {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.anime-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 560px;
+}
+.anime-search > svg {
+  position: absolute;
+  left: 14px;
+  color: var(--text-dim);
+}
+.anime-search input {
+  padding-left: 40px;
+  border-radius: 999px;
+}
+.inline-badge {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  vertical-align: 1px;
+}
+.inline-badge--free {
+  background: color-mix(in srgb, var(--ok) 85%, black);
+}
+.callout--ok {
+  background: color-mix(in srgb, var(--ok) 10%, var(--bg-elev));
+  border-color: color-mix(in srgb, var(--ok) 35%, var(--line));
+}
+.callout--ok svg {
+  color: var(--ok);
+}
+.offer {
+  border-left: 4px solid var(--offer, var(--line));
+}
+.offer img {
+  object-fit: contain;
+  background: var(--bg-elev-2);
+  padding: 4px;
+}
+@media (max-width: 760px) {
+  .page--watch .yt__frame {
+    border-radius: 0;
+    margin: -24px calc(-1 * var(--gutter)) 0;
+    width: calc(100% + 2 * var(--gutter));
+  }
+  .tabbar__link {
+    font-size: 0.62rem;
+  }
+}

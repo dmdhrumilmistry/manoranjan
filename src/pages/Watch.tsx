@@ -4,6 +4,7 @@ import { providerFor, splitId, type MediaItem, type StreamSource } from '../prov
 import { useAsync } from '../hooks/useAsync'
 import { useLibrary } from '../state/library'
 import { VideoPlayer } from '../components/VideoPlayer'
+import { YouTubePlayer } from '../components/YouTubePlayer'
 import { watchPath } from '../components/PartyFollower'
 import type { MediaRef } from '../lib/sync'
 import { useRoom } from '../state/room'
@@ -78,6 +79,17 @@ export default function Watch() {
     <div className="page page--watch">
       {sources.loading || item.loading ? (
         <div className="vp vp--loading" aria-busy />
+      ) : sources.data?.[0]?.type === 'youtube' ? (
+        <YouTubePlayer
+          key={sources.data[0].url}
+          videoId={sources.data[0].youtube?.videoId}
+          playlistId={sources.data[0].youtube?.playlistId}
+          title={it?.title ?? ''}
+          startAt={startAt}
+          party={party}
+          onProgress={onProgress}
+          onEnded={next?.play}
+        />
       ) : sources.data?.length ? (
         <VideoPlayer
           sources={sources.data}
@@ -112,6 +124,7 @@ export default function Watch() {
           )}
         </div>
       </div>
+      {sources.data?.[0]?.type !== 'youtube' && (
       <p className="small muted watch__hint">
         <Icon name="info" size={14} />
         <span className="hint--mouse">
@@ -119,6 +132,7 @@ export default function Watch() {
         </span>
         <span className="hint--touch">Tip: double-tap the left or right side of the video to skip 10 seconds.</span>
       </p>
+      )}
     </div>
   )
 }

@@ -23,7 +23,7 @@ const useSourceKey = () =>
 export function useTrending(kind: 'movie' | 'series') {
   const key = useSourceKey()
   const s = useFeed(async () => {
-    const { items, errors } = await fanOut((p) => p.trending(kind))
+    const { items, errors } = await fanOut((p) => p.trending(kind), { browseOnly: true })
     if (!items.length && errors.length) throw new Error(errors.map((e) => `${e.provider}: ${e.message}`).join('; '))
     return items
   }, [kind, key])

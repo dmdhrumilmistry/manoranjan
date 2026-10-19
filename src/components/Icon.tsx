@@ -47,6 +47,7 @@ const PATHS = {
   audio: 'M12 3a9 9 0 0 0-9 9v6a3 3 0 0 0 3 3h2v-8H5v-1a7 7 0 0 1 14 0v1h-3v8h2a3 3 0 0 0 3-3v-6a9 9 0 0 0-9-9z',
   hd: 'M3 5h18v14H3V5zm3 3v8h2v-3h2v3h2V8h-2v3H8V8H6zm8 0v8h3a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-3zm2 2h1v4h-1v-4z',
   info: 'M11 7h2v2h-2V7zm0 4h2v6h-2v-6zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z',
+  star: 'M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8L12 2.5z',
 } as const
 
 export type IconName = keyof typeof PATHS
